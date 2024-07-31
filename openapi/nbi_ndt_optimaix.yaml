@@ -1,0 +1,348 @@
+openapi: 3.0.1
+info:
+  title: NBI NDT Optimaix
+  description: NBI NDT Optimaix
+  contact:
+    name: Enrique Fernandez
+    email: efernandez@e-lighthouse.com
+  version: 0.0.1
+paths:
+   /kpi-evaluation:
+    post:
+      summary: Create Network Layers Configuration
+      description: This endpoint accepts configuration data for both Network Layer 2 and Network Layer 3.
+      operationId: createNetworkLayers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetworkLayersInput'
+      responses:
+        '200':
+          description: Network layers KPIs returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkLayersOutput'
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+  
+
+components:
+  schemas:
+    Layer2Node:
+      type: object
+      properties:
+        node-id:
+          type: string
+        name:
+          type: string
+        longitude:        # New
+          type: number
+          format: double
+        latitude:         # New
+          type: number
+          format: double
+        status:           # New
+          type: string
+          enum: [up, down]
+        ietf-network-topology:termination-point:
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer2TerminationPoint'
+    
+    Layer2TerminationPoint:
+      type: object
+      properties:
+        tp-id:
+          type: string
+          example: "TenGigE0/0/0/2"
+        name:             # New
+          type: string
+        status:           # New
+          type: string
+          enum: [up, down]
+        capacity:     # New
+          type: number
+          description: 'Rate in gbps (link capacity)'
+        is-aggregation:    # New
+          type: boolean
+        aggregated-tp-id:  # New
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer2TerminationPoint'
+    
+    Link:
+      type: object
+      properties:
+        link-id:
+          type: string
+        source:
+          type: object
+          properties:
+            source-node: 
+              type: string
+            source-tp:
+              type: string
+        destination:
+          type: object
+          properties:
+            dest-node:
+              type: string
+            dest-tp:
+              type: string
+        status:               # New
+          type: string
+          enum: [up, down]
+        latency:            # New
+          type: number
+          format: float
+          description: 'Latency in ms'
+    
+    # New Network Layer 3 Schemas
+    Layer3Node:
+      type: object
+      properties:
+        node-id:
+          type: string
+        
+        longitude:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [up, down]
+        as-number:
+          type: number
+        ietf-l3-unicast-topology:l3-node-attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            router-id:  # IPs!
+              type: array
+              items:
+                type: string
+              format: ipv4
+        ietf-network-topology:termination-point:
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer3TerminationPoint'
+    
+    Layer3TerminationPoint:
+      type: object
+      properties:
+        tp-id:
+          type: string
+        unnumbered:
+          type: boolean
+        ietf-l3-unicast-topology:l3-termination-point-attributes:
+          type: object
+          properties:
+            ip-address:
+              type: array
+              items:
+                type: string
+              format: ipv4
+            ietf-l3-ospf-topology:ospfv2-termination-point-attributes:
+              type: object
+              properties: 
+                interface-type:
+                  type: string
+                area-id:
+                  type: string
+                metric:
+                  type: string
+                is-passive:
+                  type: string
+        ietf-l3-unicast-topology:l3-node-attributes:
+          type: object
+          properties:
+            ietf-l3-ospf-topology:ospfv2-topology:
+              type: object
+        # supportingTp:
+        #   type: string
+
+    
+    IpFlow:
+      type: object
+      properties:
+        origin-node-id:
+          type: string
+        destination-node-id:
+          type: string
+        traffic:
+          type: number
+          format: float
+          description: "Rate in gbps (link capacity)"
+        tolerable-latency:
+          type: number
+          format: float
+          nullable: true
+          description: "Tolerable latency in ms"
+    
+    NetworkLayer2:
+      type: object
+      properties:
+        network-id:
+          type: string
+          example: "0:0:L2"
+        network-types:
+          type: object
+        node:
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer2Node'
+        ietf-network-topology:link:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    
+    NetworkLayer3:
+      type: object
+      properties:
+        network-id:
+          type: string
+          example: "0:0:L3_Unicast"
+        network-types:
+          type: object
+        node:
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer3Node'
+        ip-flow:
+          type: array
+          items:
+            $ref: '#/components/schemas/IpFlow'
+            
+    NetworkLayersInput:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/NetworkLayer2'
+          - $ref: '#/components/schemas/NetworkLayer3'
+                
+          
+    NetworkLayersOutput:
+      type: object
+      properties:
+        ethernet-ports:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerEthernetPortKpis'
+        ip-interface:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerIPInterfaceKpis'
+        ip-flows:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerIPFlowKpis'
+
+    PerEthernetPortKpis:
+      type: object
+      properties:
+        termination-point-id:
+          type: string
+        carried-traffic:
+          type: object
+          properties:
+            transmission:
+              type: number
+            reception:
+              type: number
+          description: "Rate in gbps (link traffic)"
+        capacity:
+          type: number
+          description: "Rate in gbps (link capacity)"
+        is-congested:
+          type: boolean
+
+    PerIPInterfaceKpis:
+      type: object
+      properties:
+        termination-point-id:
+          type: string
+        outgoing-Traffic:
+          type: number
+          description: "Rate in Gbps (outgoing traffic)"
+
+    PerIPFlowKpis:
+      type: object
+      properties:
+        offered-traffic:
+          type: number
+          description: "Rate in Gbps"
+        carried-traffic:
+          type: number
+          description: "Rate in Gbps"
+        blocked-traffic:
+          type: number
+          description: "Rate in Gbps"
+        paths:
+          type: array
+          items:
+            $ref: '#/components/schemas/Path'
+        tolerable-latency:
+          type: number
+        worst-path-latency:
+          type: number
+        is-congested:
+          type: boolean
+          description: "Is Congested in at least one Hop"
+
+    Path:
+      type: object
+      properties:
+        hops:
+          type: array
+          items:
+            $ref: '#/components/schemas/Layer3Hop'
+        latency:
+          type: number
+          description: "Path Latency in ms"
+        
+
+    Layer3Hop:
+      type: object
+      properties:
+        ietf-l2-topology:
+          type: object
+          properties:
+            origin-node-id:
+              type: string
+            origin-termination-point-id:
+              type: string
+            destination-node-id:
+              type: string
+            destination-termination-point-id:
+              type: string
+            capacity:
+              type: number
+              description: "Rate in Gbps"
+            carried-traffic:
+              type: number
+              description: "Rate in Gbps"
+        ietf-l3-topology:
+          type: object
+          properties:
+            origin-node-id:
+              type: string
+            origin-termination-point-id:
+              type: string
+            destination-id:
+              type: string
+            destination-termination-point-id:
+              type: string
+        latency:
+          type: number
+          description: "In Ms"
+        is-congested:
+          type: boolean
+          

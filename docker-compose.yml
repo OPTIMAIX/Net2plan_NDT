@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  optimaix-ndt:
+    image: registry.e-lighthouse.com/elighthouse-ndt:develop
+    container_name: optimaix-ndt 
+    ports:
+      - "55955:55955"
