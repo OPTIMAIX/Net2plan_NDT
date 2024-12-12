@@ -1,27 +1,38 @@
-# OaaS Algorithm Repository: NDT with Net2Plan
+# OaaS Image Resource: Network Digital Twin (NDT)
 
-## Run locally
+## Overview
 
-In order to test the algorithms, use Spring Boot App as "Run Configurations" type. This will execute the microservice.
+The Network Digital Twin (NDT) is a microservice designed for integration with the OaaS platform, enabling advanced network simulations and Key Performance Indicator (KPI) evaluation. It supports containerized deployment using JIB for streamlined Docker image creation and registry uploads.
 
-Go to: <http://localhost:55955/swagger-ui/index.html> in order to use the OpenAPI documentation.
+## Features
+
+* __KPI Evaluation__: Analyze and evaluate critical network performance indicators.
+* __OaaS Platform Compatibility__: Seamlessly integrates with the OaaS ecosystem.
+* __Containerization Ready__: Built with JIB to easily generate and upload Docker images.
+* __OpenAPI Support__: Access API documentation and testing via Swagger-UI.
+
+## Running Locally
+
+To run the NDT locally:
+
+* Configure the Run Configurations in your IDE to use Spring Boot App.
+* Start the application. This will launch the NDT microservice.
+* Once running, navigate to: "/swagger-ui/index.html" to explore and interact with the OpenAPI documentation.
 
 ## Docker Registry
+### Pushing a New Docker Image
 
-* This Algorithm Repository for OaaS Platform is configured to be deployed on the E-Lighthouse Registry for OaaS: <https://registry.e-lighthouse.com/>
+To push a new Docker image to the registry:
 
-## How to push new image:
+1. Set up a Maven Build Configuration in your IDE:
+        
+- Base Directory: Path to your project workspace.
+- Goals: clean package
+- Skip Tests: Select True to skip tests during the build process.
+- Parameters:
+    * jib.to.auth.username: Your registry username (replace "user" with your actual username).
+    * jib.to.auth.password: Your registry password (replace "password" with your actual password).
 
-1. Inside "Run configurations", create new "Maven Build"
-2. Complete the form as:
+2. Run the Maven Build configuration to package the application and push the Docker image to the registry.
 
-    * Base directory: workspace
-    * Goals: `clean package`
-    * Skip Tests: `True`
-    * Parameters:
-
-        * `jib.to.auth.username` = "user"
-        * `jib.to.auth.password` = "password"
-
-
-_Note_: change "user" and "password" with a valid user for the used registry.
+__Note__: Ensure you replace user and password with valid credentials for your Docker registry.

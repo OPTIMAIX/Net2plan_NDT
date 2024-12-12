@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.Action;
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology;
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology.IetfNetworks.IetfNetwork;
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology.IetfNetworks.IetfNetwork.Destination;
@@ -21,7 +20,11 @@ import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology.IetfNetworks.IetfNetwork.IetfNode;
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology.IetfNetworks.IetfNetwork.IetfTerminationPoint;
 import com.elighthouse.ndtnet2plan.models.ChangeSchedulerRequest.CurrentTopology.IetfNetworks.IetfNetwork.Source;
-import com.elighthouse.ndtnet2plan.models.KpisInDesign;
+import com.elighthouse.ndtnet2plan.models.IetfTvrTopologySchedule;
+import com.elighthouse.ndtnet2plan.models.IetfTvrTopologySchedule.TopologyScheduleContent;
+import com.elighthouse.ndtnet2plan.models.KpiMetricGivenLinkId;
+import com.elighthouse.ndtnet2plan.models.KpiMetricGivenNodeId;
+import com.elighthouse.ndtnet2plan.models.KpisInDesignPerPairNodes;
 import com.elighthouse.ndtnet2plan.utils.GraphUtils;
 import com.net2plan.interfaces.networkDesign.Demand;
 import com.net2plan.interfaces.networkDesign.Link;
@@ -45,7 +48,18 @@ public class NdtService {
 		Map<String, Node> nodeMap = new HashMap<>();
 		for (IetfNode nodeData : network.node) {
 	        Node node = np.addNode(0.0, 0.0, nodeData.nodeId, null);
-	        for (IetfTerminationPoint tpData : nodeData.terminationPoint) {
+	        
+	        if (nodeData.nodeAttributes == null) {
+	        	System.err.println("Node attributes not found for node " + nodeData.nodeId + ", skipping");
+	        	continue;
+	        }
+	        
+			if (nodeData.nodeAttributes.terminationPoint == null) {
+				System.err.println("Termination points not found for node " + nodeData.nodeId + ", skipping");
+				continue;
+			}
+	        
+	        for (IetfTerminationPoint tpData : nodeData.nodeAttributes.terminationPoint) {
 	            node.addTag(tpData.tpId);
 	            nodeMap.put(nodeData.nodeId, node);
 	        }
@@ -60,91 +74,123 @@ public class NdtService {
 		    l.setAttribute("identifier", linkData.linkId);
 		    l.setAttribute("sourceTerminationPoint", linkData.source.sourceTp);
 	        l.setAttribute("destinationTerminationPoint", linkData.destination.destTp);
+	        if (linkData.linkAttributes != null) {
+	        	// Check for the state of the link
+	        	if (linkData.linkAttributes.state != null) {
+	        		
+	        	}
+	        	
+	        	// Check for latency 
+				if (linkData.linkAttributes.latency != 0) {
+					int latency = linkData.linkAttributes.latency;	// In Ms
+					setLinkDistanceForLatency(l, latency);
+				}
+	        	
+	        	// Check for bandwidth
+				if (linkData.linkAttributes.bandwidth != 0) {
+					int bandwidth = linkData.linkAttributes.bandwidth;	// In Gbps
+					l.setCapacity(bandwidth);
+				}
+	        }
 	    }
 		
 		return np;
 	}
 	
-	public NetPlan applyActions(NetPlan np, List<Action> actions) {
-		final NetPlan afterActions = np.copy();
+	public void printDesignState(NetPlan np) {
+		System.out.println("-- Nodes: ");
+		for (Node node : np.getNodes()) {
+			System.out.println("   Node: " + node.getName() + ", state: " + (node.isUp() ? "UP" : "DOWN"));
+		}
 		
-		for(Action action : actions) {
-			switch(action.element.toUpperCase()) {
-			case "LINK":
-				applyLinkAction(afterActions, action);
-				break;
-			default:
-				System.err.println("Unknown action element: " + action.element);
-				break;
+		System.out.println("-- Links: ");
+		for (Link link : np.getLinks()) {
+			System.out.println("  Link: " + link.getAttribute("identifier") + ", state: " + (link.isUp() ? "UP" : "DOWN") + ", capacity: " + link.getCapacity() + " Gbps, latency: " + getLatencyInMs(link)+ " ms");
+		}
+	}
+	
+	public void printResumeOfDemands(NetPlan np) {
+		// The idea is to go for each demand and print the offered, carried, blocked and lost traffic
+		for (Demand demand : np.getDemands()) {
+			System.out.println("Demand: " + demand.getIndex() + " (" + demand.getIngressNode().getName() + "-" + demand.getEgressNode().getName() + "), offered: " + demand.getOfferedTraffic()
+					+ ", carried: " + demand.getCarriedTraffic() + ", blocked: " + demand.getBlockedTraffic());
+		}
+	}
+
+	public NetPlan applyTvrActions(NetPlan np, TopologyScheduleContent tvrContent) {
+		final NetPlan afterActions = np.copy();
+		if (tvrContent == null) {
+			return afterActions;
+		}
+		
+		if (tvrContent.nodes != null) {
+			for (IetfTvrTopologySchedule.Node node : tvrContent.nodes) {
+				Node n = afterActions.getNodeByName(node.nodeId);
+				if (n != null) {
+					boolean changeTostate = node.available.defaultNodeAvailable;
+					System.out.println("Setting link " + node.nodeId + " to " + changeTostate);
+					this.changeNodeState(afterActions, node.nodeId, changeTostate);
+				}
+			}
+		}
+		
+		if (tvrContent.links != null) {
+			for (IetfTvrTopologySchedule.Link link : tvrContent.links) {
+				Link l = this.findLinkByLinkIdIdentifier(np, link.sourceLinkId);
+				if (l != null) {
+					boolean changeTostate = link.available.defaultLinkAvailable;
+					System.out.println("Setting link " + link.sourceLinkId + " to " + changeTostate);
+					this.changeLinkState(afterActions, link.sourceLinkId, changeTostate);
+					Link bidiPair = this.findLinkBetweenNodes(afterActions, l.getDestinationNode(), l.getOriginNode());
+					if (bidiPair != null) {
+						System.out.println("Setting link " + bidiPair.getAttribute("identifier") + " to " + changeTostate);
+						this.changeLinkState(afterActions, bidiPair.getAttribute("identifier"), changeTostate);
+					}
+				}
 			}
 		}
 		
 		return afterActions;
 	}
 	
-	public void applyLinkAction(NetPlan np, Action action) {
-		try {
-			String[] nodes = action.ref.split(",");
-			String originNodeId = nodes[0];
-			String originTpId = nodes[1];
-			String destinationNodeId = nodes[2];
-			String destinationTpId = nodes[3];
-			
-			Node originNode = np.getNodeByName(originNodeId);
-			Node destinationNode = np.getNodeByName(destinationNodeId);
-			
-			if (originNode == null || destinationNode == null) {
-	            System.out.println("Node not found. Origin ID: " + originNodeId + ", Destination ID: " + destinationNodeId);
-	            return;	
-	        }
-			
-			String linkId = action.ref;
-			Link link = findLinkBetweenNodes(np, originNode, destinationNode);
-			
-			if (link == null) {
-	            System.out.println("Link not found between nodes " + originNodeId + " and " + destinationNodeId + ". Creating a new link...");
-	            
-	            if (!terminationPointExist(np, originNode, originTpId)) {
-					System.out.println("Source termination point does not exist for node " + originNode.getName());
-					return;
+	public void changeLinkState(NetPlan np, String linkId, boolean state) {
+		Link link = findLinkByLinkIdIdentifier(np, linkId);
+		if (link != null) {
+			link.setFailureState(state);
+		}
+	}
+	
+	public void changeNodeState(NetPlan np, String nodeId, boolean state) {
+		Node node = np.getNodeByName(nodeId);
+		if (node != null) {
+			node.setFailureState(state);
+		}
+	}
+	
+	public NetPlan applyLatencyAndBandwidthGivenLinkIds(NetPlan np, 
+			List<KpiMetricGivenLinkId> latency, List<KpiMetricGivenLinkId> bandwidth) {
+		// For each element in each list, find the link by identifier and apply the value.
+		// Latency, in Ms
+		if (latency != null) {
+			for (KpiMetricGivenLinkId metric : latency) {
+				Link link = findLinkByLinkIdIdentifier(np, metric.linkId);
+				if (link != null) {
+					setLinkDistanceForLatency(link, metric.value);
 				}
-	            
-	            if (!terminationPointExist(np, destinationNode, destinationTpId)) {
-	            	System.out.println("Destination termination point does not exist for node " + destinationNode.getName());
-	            	return;
-	            }
-				
-	            if (isTerminationPointUsedAsSource(np, originNode, originTpId)) {
-	            	System.out.println("Source termination point is already used for node " + originNode.getName());
-	            	return;
-	            }
-	            
-				if (isTerminationPointUsedAsDestination(np, destinationNode, destinationTpId)) {
-					System.out.println("Destination termination point is already used for node " + destinationNode.getName());
-					return;
+			}
+		}
+		
+		// Bandwidth, in Gbps
+		if (bandwidth != null) {
+			for (KpiMetricGivenLinkId metric : bandwidth) {
+				Link link = findLinkByLinkIdIdentifier(np, metric.linkId);
+				if (link != null) {
+					link.setCapacity(metric.value);
 				}
-
-	            final Link l = np.addLink(originNode, destinationNode, 0.0, 0, 1000.0, null, np.getNetworkLayerDefault());
-	            l.setName(linkId);
-	            l.setAttribute("sourceTerminationPoint", originTpId);
-	            l.setAttribute("destinationTerminationPoint", destinationTpId);
-	            link = l;
-	        }
-			
-			// Apply the action
-	        if ("DOWN".equalsIgnoreCase(action.actionType)) {
-	        	System.out.println("Setting link down: " + linkId);
-	            link.setFailureState(false);
-	        } else if ("UP".equalsIgnoreCase(action.actionType)) {
-	        	System.out.println("Setting link up: " + linkId);
-	            link.setFailureState(true);
-	        } else {
-	            System.out.println("Unsupported action type: " + action.actionType);
-	        }
-		} catch (Exception e) {
-            System.err.println("Error applying action: " + action);
-            e.printStackTrace();
-        }
+			}
+		}
+		
+		return np;
 	}
 	
 	public NetPlan applyKpisToDesign(NetPlan np, double[][] latencyMatrix, double[][] bandwidthMatrix) {
@@ -171,10 +217,10 @@ public class NdtService {
 		return np;
 	}
 	
-	public KpisInDesign getKpisFromDesign(NetPlan np) {
+	public KpisInDesignPerPairNodes getNewKpisFromDesign(NetPlan np) {
+		KpisInDesignPerPairNodes kpis = new KpisInDesignPerPairNodes();
         List<Node> nodes = np.getNodes();
         int size = nodes.size();
-        KpisInDesign kpis = new KpisInDesign(size);
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -182,43 +228,64 @@ public class NdtService {
                     Node origin = nodes.get(i);
                     Node destination = nodes.get(j);
                     Demand demand = findDemand(np, origin, destination);
-                    
+
                     if (demand != null) {
                         double offeredTraffic = demand.getOfferedTraffic();
                         double totalCarriedTraffic = 0.0;
                         double totalCapacity = 0.0;
                         double totalLatency = 0.0;
                         
+                        double latencyEndToEndInMs = demand.getWorstCasePropagationTimeInMs();
+                        kpis.addLatencyDemand(KpiMetricGivenNodeId.ofMs(origin.getName(), destination.getName(), latencyEndToEndInMs));
+
                         // Correctly retrieve and iterate over forwarding rules
                         SortedMap<Pair<Demand, Link>, Double> forwardingRules = np.getForwardingRules();
                         for (Map.Entry<Pair<Demand, Link>, Double> entry : forwardingRules.entrySet()) {
                             Pair<Demand, Link> pair = entry.getKey();
-                            if (pair.getFirst().equals(demand)) { // Ensure we're working with the current demand
+                            if (pair.getFirst().equals(demand)) {
                                 Link link = pair.getSecond();
                                 double fraction = entry.getValue();
                                 
                                 double carriedTraffic = offeredTraffic * fraction;
                                 totalCarriedTraffic += carriedTraffic;
-                                totalCapacity += link.getCapacity() * fraction; // Weighted capacity
-                                totalLatency += link.getPropagationDelayInMs() * fraction; // Weighted latency
+                                totalCapacity += link.getCapacity() * fraction;
+                                totalLatency += link.getPropagationDelayInMs() * fraction;
+                                
+                                double blockedTrafficInGbps = offeredTraffic > totalCarriedTraffic ? offeredTraffic - totalCarriedTraffic : 0;
+                                double lostTrafficInGbps = offeredTraffic > totalCarriedTraffic ? offeredTraffic - totalCarriedTraffic : 0;
+                                
+                                // Add each KPI to the corresponding list in KpisInDesignPerLink
+                                kpis.addOfferedTraffic(KpiMetricGivenNodeId.ofGbps(origin.getName(), destination.getName(), offeredTraffic));
+                                kpis.addCarriedTraffic(KpiMetricGivenNodeId.ofGbps(origin.getName(), destination.getName(), totalCarriedTraffic));
+                                kpis.addBlockedTraffic(KpiMetricGivenNodeId.ofGbps(origin.getName(), destination.getName(), blockedTrafficInGbps));
+                                kpis.addLostTraffic(KpiMetricGivenNodeId.ofGbps(origin.getName(), destination.getName(), lostTrafficInGbps));
                             }
                         }
-                        
-                        // Update the matrices
-                        kpis.offeredTrafficMatrixInGbps[i][j] = offeredTraffic;
-                        kpis.carriedTrafficMatrixInGbps[i][j] = totalCarriedTraffic;
-                        kpis.blockedTrafficMatrixInGbps[i][j] = offeredTraffic > totalCarriedTraffic ? offeredTraffic - totalCarriedTraffic : 0;
-                        kpis.lostTrafficMatrixInGbps[i][j] = offeredTraffic > totalCarriedTraffic ? offeredTraffic - totalCarriedTraffic : 0;
-                        kpis.capacityMatrixInGbps[i][j] = totalCapacity;
-                        kpis.latencyMatrixInMs[i][j] = totalLatency;
                     }
                 }
             }
         }
         return kpis;
     }
-
 	
+	public NetPlan applyTrafficToDesignByNodeId(NetPlan np, List<KpiMetricGivenNodeId> traffic) {
+		if (traffic != null) {
+			for (KpiMetricGivenNodeId metric : traffic) {
+				final Node source = np.getNodeByName(metric.sourceNodeId);
+				final Node destination = np.getNodeByName(metric.destinationNodeId);
+				final double offeredTraffic = metric.value;
+				Demand demand = findDemand(np, source, destination);
+	            if (demand == null) {
+	                np.addDemand(source, destination, offeredTraffic, null, null);
+	            } else {
+	                demand.setOfferedTraffic(offeredTraffic);
+	            }
+			}
+		}
+		
+		return np;
+	}
+
 	public NetPlan applyTrafficMatrixToDesign(NetPlan np, double[][] traffixMatrix) {
 		List<Node> nodes = np.getNodes();
 		if (traffixMatrix.length != nodes.size()) {
@@ -328,19 +395,22 @@ public class NdtService {
         for (Node node : np.getNodes()) {
             IetfNode ietfNode = new IetfNode();
             ietfNode.nodeId = node.getName();
-            ietfNode.terminationPoint = node.getTags().stream().map(IetfTerminationPoint::new).collect(Collectors.toList());
+            ietfNode.nodeAttributes =  new IetfNode.IetfL3UnicastTopologyNodeAttributes();
+            ietfNode.nodeAttributes.terminationPoint = node.getTags().stream().map(IetfTerminationPoint::new).collect(Collectors.toList());
+            ietfNode.nodeAttributes.state = node.isDown() ? "DOWN" : "UP";
             ietfNetwork.node.add(ietfNode);
         }
         
         ietfNetwork.link = new ArrayList<>();
         for (Link link : np.getLinks()) {
-        	
-        	// Check if link is down, if so, skip it
-			if (!link.isUp()) {System.out.println("Skipping link: " + link.getName() + ", is down"); continue;}
-        	
-			IetfLink ietfLink = new IetfLink();
+        	IetfLink ietfLink = new IetfLink();
 			ietfLink.source = new Source(link.getOriginNode().getName(), link.getAttribute("sourceTerminationPoint"));
 			ietfLink.destination = new Destination(link.getDestinationNode().getName(), link.getAttribute("destinationTerminationPoint"));
+			ietfLink.linkAttributes = new IetfLink.IetfL3UnicastTopologyLinkAttributes();
+			ietfLink.linkAttributes.state = link.isDown() ? "DOWN" : "UP";
+			
+			ietfLink.linkAttributes.latency = getLatencyInMs(link);
+			ietfLink.linkAttributes.bandwidth = (int) link.getCapacity();
 			
 			if (link.getAttribute("identifier") == null) {
 				ietfLink.linkId = link.getOriginNode().getName() + "," + ietfLink.source.sourceTp + "," +
@@ -353,6 +423,15 @@ public class NdtService {
 		}
 		
         currentTopology.ietfNetworks.network.add(ietfNetwork);
+		
+		// Add the traffic matrix
+		currentTopology.traffic = new ArrayList<>();
+		for (Demand demand : np.getDemands()) {
+			KpiMetricGivenNodeId traffic = KpiMetricGivenNodeId.ofGbps(
+					demand.getIngressNode().getName(), demand.getEgressNode().getName(), demand.getOfferedTraffic());
+			currentTopology.traffic.add(traffic);
+		}
+        
         return currentTopology;
     }
 	
@@ -377,6 +456,15 @@ public class NdtService {
 	private Link findLinkByName(NetPlan np, String linkName) {
 		for (Link link : np.getLinks()) {
 			if (link.getName().equals(linkName)) {
+				return link;
+			}
+		}
+		return null;
+	}
+	
+	private Link findLinkByLinkIdIdentifier(NetPlan np, String linkName) {
+		for (Link link : np.getLinks()) {
+			if (link.getAttribute("identifier").equals(linkName)) {
 				return link;
 			}
 		}
@@ -413,5 +501,9 @@ public class NdtService {
 			}
 		}
 		return false;
+	}
+	
+	private int getLatencyInMs(Link l) {
+		return (int) ((int) l.getLengthInKm() / l.getPropagationSpeedInKmPerSecond());
 	}
 }

@@ -1,0 +1,941 @@
+{
+    "ietf-tvr-topology:topology-schedule": {
+        "links": [
+            {
+                "source-node": "xrv13",
+                "source-link-id": "xrv13-Gi0/0/0/1-xrv14-Gi0/0/0/1",
+                "available": {
+                    "default-link-available": "false",
+                    "schedules": [
+                        {
+                            "schedule-id": 1,
+                            "schedule-type": {
+                                "recurrence": {
+                                    "recurrence-first": {
+                                        "utc-start-time": "2024-11-01T08:05:00Z",
+                                        "duration": 0
+                                    },
+                                    "recurrence-bound": {
+                                        "count": 1
+                                    },
+                                    "frequency": 1
+                                }
+                            },
+                            "attr-value": {
+                                "link-available": "true"
+                            }
+                        }
+                    ],
+                    "time-zone-identifier": "UTC"
+                }
+            }
+        ]
+    },
+    "current_topology": {
+        "latency_link": [
+            {
+                "link-id": "xrv16-Gi0/0/0/2-xrv13-Gi0/0/0/2",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv16-Gi0/0/0/0-xrv17-Gi0/0/0/0",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv11-Gi0/0/0/2-xrv15-Gi0/0/0/2",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv11-Gi0/0/0/0-xrv13-Gi0/0/0/0",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv13-Gi0/0/0/1-xrv14-Gi0/0/0/1",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv17-Gi0/0/0/1-xrv18-Gi0/0/0/1",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv12-Gi0/0/0/1-xrv15-Gi0/0/0/1",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv12-Gi0/0/0/0-xrv14-Gi0/0/0/0",
+                "value": 10,
+                "unit": "MS"
+            },
+            {
+                "link-id": "xrv14-Gi0/0/0/2-xrv18-Gi0/0/0/2",
+                "value": 10,
+                "unit": "MS"
+            }
+        ],
+        "bandwidth_link": [
+            {
+                "link-id": "xrv16-Gi0/0/0/2-xrv13-Gi0/0/0/2",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv16-Gi0/0/0/0-xrv17-Gi0/0/0/0",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv11-Gi0/0/0/2-xrv15-Gi0/0/0/2",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv11-Gi0/0/0/0-xrv13-Gi0/0/0/0",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv13-Gi0/0/0/1-xrv14-Gi0/0/0/1",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv17-Gi0/0/0/1-xrv18-Gi0/0/0/1",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv12-Gi0/0/0/1-xrv15-Gi0/0/0/1",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv12-Gi0/0/0/0-xrv14-Gi0/0/0/0",
+                "value": 200,
+                "unit": "GBPS"
+            },
+            {
+                "link-id": "xrv14-Gi0/0/0/2-xrv18-Gi0/0/0/2",
+                "value": 200,
+                "unit": "GBPS"
+            }
+        ],
+        "traffic_demand": [
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv11",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv11",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv12",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv12",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv13",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv13",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv14",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv14",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv15",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv15",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv16",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv16",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv17",
+                "destination-node-id": "xrv18",
+                "value": 10.0,
+                "unit": "GBPS"
+            },
+            {
+                "source-node-id": "xrv18",
+                "destination-node-id": "xrv17",
+                "value": 10.0,
+                "unit": "GBPS"
+            }
+        ],
+        "ietf-network:networks": {
+            "network": [
+                {
+                    "network-id": "0 : 0 : 0 ISIS",
+                    "network-types": {
+                        "ietf-l3-isis-topology:isis-topology": {},
+                        "ietf-l3-unicast-topology:l3-unicast-topology": {}
+                    },
+                    "node": [
+                        {
+                            "node-id": "xrv16",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv16",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv11",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv11",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv13",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv13",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv17",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv17",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv12",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv12",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv14",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv14",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/0"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv18",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv18",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        },
+                        {
+                            "node-id": "xrv15",
+                            "ietf-l3-unicast-topology:l3-node-attributes": {
+                                "name": "",
+                                "router-id": "xrv15",
+                                "termination-point": [
+                                    {
+                                        "tp-id": "Gi0/0/0/2"
+                                    },
+                                    {
+                                        "tp-id": "Gi0/0/0/1"
+                                    }
+                                ],
+                                "prefix": []
+                            },
+                            "ietf-ne-commissioning:commissioning-configs": {
+                                "system-config": {
+                                    "openconfig-system:system": {
+                                        "ssh-server": {
+                                            "state": {
+                                                "enable": "True",
+                                                "protocol-version": "V2"
+                                            }
+                                        },
+                                        "telnet-server": {
+                                            "state": {
+                                                "enable": "False"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ietf-network-topology:termination-point": []
+                        }
+                    ],
+                    "ietf-network-topology:link": [
+                        {
+                            "link-id": "xrv16-Gi0/0/0/2-xrv13-Gi0/0/0/2",
+                            "source": {
+                                "source-node": "xrv16",
+                                "source-tp": "Gi0/0/0/2"
+                            },
+                            "destination": {
+                                "dest-node": "xrv13",
+                                "dest-tp": "Gi0/0/0/2"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv16-Gi0/0/0/0-xrv17-Gi0/0/0/0",
+                            "source": {
+                                "source-node": "xrv16",
+                                "source-tp": "Gi0/0/0/0"
+                            },
+                            "destination": {
+                                "dest-node": "xrv17",
+                                "dest-tp": "Gi0/0/0/0"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv11-Gi0/0/0/2-xrv15-Gi0/0/0/2",
+                            "source": {
+                                "source-node": "xrv11",
+                                "source-tp": "Gi0/0/0/2"
+                            },
+                            "destination": {
+                                "dest-node": "xrv15",
+                                "dest-tp": "Gi0/0/0/2"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv11-Gi0/0/0/0-xrv13-Gi0/0/0/0",
+                            "source": {
+                                "source-node": "xrv11",
+                                "source-tp": "Gi0/0/0/0"
+                            },
+                            "destination": {
+                                "dest-node": "xrv13",
+                                "dest-tp": "Gi0/0/0/0"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv13-Gi0/0/0/1-xrv14-Gi0/0/0/1",
+                            "source": {
+                                "source-node": "xrv13",
+                                "source-tp": "Gi0/0/0/1"
+                            },
+                            "destination": {
+                                "dest-node": "xrv14",
+                                "dest-tp": "Gi0/0/0/1"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv17-Gi0/0/0/1-xrv18-Gi0/0/0/1",
+                            "source": {
+                                "source-node": "xrv17",
+                                "source-tp": "Gi0/0/0/1"
+                            },
+                            "destination": {
+                                "dest-node": "xrv18",
+                                "dest-tp": "Gi0/0/0/1"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv12-Gi0/0/0/1-xrv15-Gi0/0/0/1",
+                            "source": {
+                                "source-node": "xrv12",
+                                "source-tp": "Gi0/0/0/1"
+                            },
+                            "destination": {
+                                "dest-node": "xrv15",
+                                "dest-tp": "Gi0/0/0/1"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv12-Gi0/0/0/0-xrv14-Gi0/0/0/0",
+                            "source": {
+                                "source-node": "xrv12",
+                                "source-tp": "Gi0/0/0/0"
+                            },
+                            "destination": {
+                                "dest-node": "xrv14",
+                                "dest-tp": "Gi0/0/0/0"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        },
+                        {
+                            "link-id": "xrv14-Gi0/0/0/2-xrv18-Gi0/0/0/2",
+                            "source": {
+                                "source-node": "xrv14",
+                                "source-tp": "Gi0/0/0/2"
+                            },
+                            "destination": {
+                                "dest-node": "xrv18",
+                                "dest-tp": "Gi0/0/0/2"
+                            },
+                            "ietf-l3-unicast-topology:l3-link-attributes": {
+                                "routingcost": 10,
+                                "latency": 10,
+                                "bandwidth": 200,
+                                "tefsdn-topology:domain-id": "0",
+                                "tefsdn-topology:link-attributes": {
+                                    "level": "2"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

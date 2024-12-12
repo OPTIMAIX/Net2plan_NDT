@@ -21,8 +21,8 @@ public class NdtNet2planApplication {
 @OpenAPIDefinition(
         info = @Info(
                 title = "Network Digital Twin API",
-                version = "0.1.0",
-                description = "Network Digital Twin (NDT) based in Net2Plan. This API allows to interact with the NDT to perform different operations such as KPI evaluation, network design, etc.",
+                version = "0.5.0",
+                description = "Network Digital Twin (NDT) based in Net2Plan uisng IETF data models. This API allows to interact with the NDT to perform different operations such as KPI evaluation, check network design, evaluate network changes, etc.",
                 contact = @Contact(name = "Enrique Fernandez", email = "efernandez@e-lighthouse.com")
         		)
 )

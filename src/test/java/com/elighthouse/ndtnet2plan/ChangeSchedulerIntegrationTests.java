@@ -30,8 +30,8 @@ public class ChangeSchedulerIntegrationTests {
     }
 	
     @Test
-    public void testPostKpiEvaluation() throws Exception {
-        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/resources/change_scheduler_ndt_request.json")));
+    public void testPostSimpleKpiEvaluation() throws Exception {
+        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/resources/simple_ndt_request.json")));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -51,8 +51,29 @@ public class ChangeSchedulerIntegrationTests {
     }
     
     @Test
-    public void testPostKpiEvaluationWithLosses() throws Exception {
-        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/resources/change_scheduler_ndt_request_with_losses.json")));
+    public void testPostSimpleKpiEvaluationWithLosses() throws Exception {
+        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/resources/simple_ndt_request_with_losses.json")));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity("/kpi-evaluation", request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        // Additional assertions can be added here to check the content of the response
+        
+        System.out.println(response.getBody());
+        
+        ResponseEntity<String> response_current_topology = restTemplate.getForEntity("/current-topology", String.class);
+        assertEquals(HttpStatus.OK, response_current_topology.getStatusCode());
+        
+        System.out.println(response_current_topology.getBody());
+    }
+    
+    @Test
+    public void testPostChangeSchedulerKpiEvaluationWithLosses() throws Exception {
+        String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/resources/change_scheduler_ndt_req.json")));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
